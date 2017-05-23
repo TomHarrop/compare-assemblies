@@ -46,7 +46,7 @@ run_busco() {
 
     # run BUSCO
     _cmd=( /usr/bin/python2 "${my_busco}"
-               --cpu 20
+               --cpu 1
                --mode genome
                --in "${_fastapath}"
                --out "${_filename}"
@@ -64,7 +64,7 @@ run_busco() {
         printf "\n"
         shopt -u extglob
 
-        "${_cmd[@]}" &> busco.log
+        "${_cmd[@]}" &> busco.log &
     )
 }
 export -f run_busco
@@ -76,4 +76,4 @@ find "data/assemblies" -name "*.fa" \
 find "data/assemblies" -name "*.fna" \
     -exec bash -c 'run_busco "${0}"' {} \;
 
-
+wait
