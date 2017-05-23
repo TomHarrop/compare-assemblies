@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -eu
+
+# set up output
+outdir="output/assembly_statistics"
+if [[ ! -e "${outdir}" ]]; then
+    mkdir -p "${outdir}"
+fi
+
+# get files
+input_fa=()
+while IFS=  read -r -d $'\0'; do
+    input_fa+=("$REPLY")
+done < <(find "data/assemblies" -name "*.fa" -print0)
+while IFS=  read -r -d $'\0'; do
+    input_fa+=("$REPLY")
+done < <(find "data/assemblies" -name "*.fna" -print0)
+
+# format into string
+infiles=$(printf "in=%s " "${input_fa[@]}" )
+
+# run statswrapper
+bin/bbmap/statswrapper.sh threads=8 -Xmx50g \
+    minscaf=1000 \
+    format=3 \
+    "${infiles}" \
+    > "${outdir}/stats.txt" \
+    2> "${outdir}/statswrapper.log"
+    

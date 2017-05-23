@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# setup path for BUSCO
+ busco_path="${HOME}/bin/hmmer/bin:"
+busco_path+="${HOME}/bin/augustus/bin:"
+busco_path+="${HOME}/bin/augustus/scripts:"
+busco_path+="${PATH}"
+
+export PATH="${busco_path}"
+export AUGUSTUS_CONFIG_PATH="${HOME}/bin/augustus/config"
+
+export my_busco
+my_busco="$(readlink -f bin/busco/BUSCO.py)"
+
+run_busco() {
+    local _fasta
+    local _fastapath
+    local _bn
+    local _filename
+    local _outdir
+    local _outpath
+    local _lineage
+    local _species
+    local _cmd
+
+    _fasta="${0}"
+    _fastapath=$(readlink -f "${_fasta}")
+    _bn="$(basename "${_fasta}")"
+    _filename="${_bn%.*}"
+    _outdir="output/busco/${_filename}"
+
+    # make output directory
+    if [[ ! -e "${_outdir}" ]]; then
+        mkdir -p "${_outdir}"
+    fi
+    _outpath=$(readlink -f "${_outdir}")
+
+    # decide which lineage to use
+    if grep -q "braconidae" <<< "${_fasta}"; then
+        _species="nasonia"
+        _lineage="$(readlink -f "data/busco/hymenoptera_odb9")"
+    elif grep -q "cuculionidae" <<< "${_fasta}"; then
+        _species="tribolium2012"
+        _lineage="$(readlink -f "data/busco/endopterygota_odb9")"
+    fi
+
+    # run BUSCO
+    _cmd=( /usr/bin/python2 "${my_busco}"
+               --cpu 10
+               --mode genome
+               --in "${_fastapath}"
+               --out "${_filename}"
+               --lineage "${_lineage}"
+               --species "${_species}")
+    export _cmd
+    export _outpath
+
+    (
+        cd "${_outpath}" || exit 1
+        shopt -s extglob
+        printf "[ %s: Running BUSCO command ]\n" \
+            "$(date)"
+        printf "%s " "${_cmd[@]//+([[:blank:]])/ }"
+        printf "\n"
+        shopt -u extglob
+
+        "${_cmd[@]}" &> busco.log
+    )
+}
+export -f run_busco
+
+# run busco on fasta files
+find "data/assemblies" -name "*.fa" \
+    -exec bash -c 'run_busco "${0}"' {} \;
+
+find "data/assemblies" -name "*.fna" \
+    -exec bash -c 'run_busco "${0}"' {} \;
+
+
