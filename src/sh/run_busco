@@ -46,7 +46,7 @@ run_busco() {
 
     # run BUSCO
     _cmd=( /usr/bin/python2 "${my_busco}"
-               --cpu 10
+               --cpu 20
                --mode genome
                --in "${_fastapath}"
                --out "${_filename}"
@@ -64,7 +64,7 @@ run_busco() {
         printf "\n"
         shopt -u extglob
 
-        #"${_cmd[@]}" &> busco.log
+        "${_cmd[@]}" &> busco.log
     )
 }
 export -f run_busco
