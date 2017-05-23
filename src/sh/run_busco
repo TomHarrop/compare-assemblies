@@ -4,6 +4,7 @@
  busco_path="${HOME}/bin/hmmer/bin:"
 busco_path+="${HOME}/bin/augustus/bin:"
 busco_path+="${HOME}/bin/augustus/scripts:"
+busco_path+="${HOME}/bin/ncbi-blast-2.2.31+/bin:"
 busco_path+="${PATH}"
 
 export PATH="${busco_path}"
@@ -46,7 +47,7 @@ run_busco() {
 
     # run BUSCO
     _cmd=( /usr/bin/python2 "${my_busco}"
-               --cpu 1
+               --cpu 50
                --mode genome
                --in "${_fastapath}"
                --out "${_filename}"
@@ -64,7 +65,7 @@ run_busco() {
         printf "\n"
         shopt -u extglob
 
-        "${_cmd[@]}" &> busco.log &
+        "${_cmd[@]}" &> busco.log
     )
 }
 export -f run_busco
