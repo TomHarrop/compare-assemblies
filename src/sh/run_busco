@@ -39,7 +39,7 @@ run_busco() {
     if grep -q "braconidae" <<< "${_fasta}"; then
         _species="nasonia"
         _lineage="$(readlink -f "data/busco/hymenoptera_odb9")"
-    elif grep -q "cuculionidae" <<< "${_fasta}"; then
+    elif grep -q "curculionidae" <<< "${_fasta}"; then
         _species="tribolium2012"
         _lineage="$(readlink -f "data/busco/endopterygota_odb9")"
     fi
