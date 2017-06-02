@@ -81,13 +81,8 @@ fn_lab <- plyr::revalue(filename_order, c(
 ))
 plot_data[, filename := factor(filename, levels = filename_order)]
 
+# save plot data
+saveRDS(plot_data, "output/plots/stats_pd.Rds")
+
 # vis
-ggplot(plot_data[family == "Curculionidae"],
-       aes(x = filename, y = value, fill = category)) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-    xlab(NULL) + ylab(NULL) +
-    scale_fill_brewer(palette = "Set1", guide = FALSE) +
-    scale_x_discrete(breaks = filename_order, labels = fn_lab) +
-    facet_wrap("variable", scales = "free_y", nrow = 1) +
-    geom_col()
 

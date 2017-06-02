@@ -79,6 +79,8 @@ fn_lab <- plyr::revalue(filename_order, c(
 ))
 plot_data[, filename := factor(filename, levels = filename_order)]
 
+# save plot data
+saveRDS(plot_data, "output/plots/busco_pd.Rds")
 
 # visualise
 Set1 <- RColorBrewer::brewer.pal(9, "Set1")
