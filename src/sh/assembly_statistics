@@ -21,7 +21,7 @@ done < <(find "data/assemblies" -name "*.fna" -print0)
 infiles=$(printf "in=%s " "${input_fa[@]}" )
 
 # run statswrapper
-bin/bbmap/statswrapper.sh threads=8 -Xmx50g \
+bin/bbmap/statswrapper.sh threads=20 -Xmx200g \
     minscaf=1000 \
     format=3 \
     "${infiles}" \

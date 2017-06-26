@@ -72,7 +72,7 @@ run_busco() {
     else
         printf "[ %s: Found BUSCO results ]\n%s/busco.log\n" \
                 "$(date)" "${_outdir}"
-        printf "[ %s: Not running BUSCO for %s ]\n" \
+        printf "[ %s: Not running BUSCO for FASTA ]\n%s\n" \
                 "$(date)" "${_fasta}"
     fi
 }
