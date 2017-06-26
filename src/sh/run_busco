@@ -30,43 +30,51 @@ run_busco() {
     _filename="${_bn%.*}"
     _outdir="output/busco/${_filename}"
 
-    # make output directory
-    if [[ ! -e "${_outdir}" ]]; then
-        mkdir -p "${_outdir}"
+    # only run busco if output doesn't exist
+    if [[ ! -e "${_outdir}/busco.log" ]]; then
+        # make output directory
+        if [[ ! -e "${_outdir}" ]]; then
+            mkdir -p "${_outdir}"
+        fi
+        _outpath=$(readlink -f "${_outdir}")
+
+        # decide which lineage to use
+        if grep -q "braconidae" <<< "${_fasta}"; then
+            _species="nasonia"
+            _lineage="$(readlink -f "data/busco/hymenoptera_odb9")"
+        elif grep -q "curculionidae" <<< "${_fasta}"; then
+            _species="tribolium2012"
+            _lineage="$(readlink -f "data/busco/endopterygota_odb9")"
+        fi
+
+        # run BUSCO
+        _cmd=( /usr/bin/python2 "${my_busco}"
+                   --cpu 50
+                   --mode genome
+                   --in "${_fastapath}"
+                   --out "${_filename}"
+                   --lineage "${_lineage}"
+                   --species "${_species}")
+        export _cmd
+        export _outpath
+
+        (
+            cd "${_outpath}" || exit 1
+            shopt -s extglob
+            printf "[ %s: Running BUSCO command ]\n" \
+                "$(date)"
+            printf "%s " "${_cmd[@]//+([[:blank:]])/ }"
+            printf "\n"
+            shopt -u extglob
+
+            "${_cmd[@]}" &> busco.log
+        )
+    else
+        printf "[ %s: Found BUSCO results ]\n%s/busco.log\n" \
+                "$(date)" "${_outdir}"
+        printf "[ %s: Not running BUSCO for %s ]\n" \
+                "$(date)" "${_fasta}"
     fi
-    _outpath=$(readlink -f "${_outdir}")
-
-    # decide which lineage to use
-    if grep -q "braconidae" <<< "${_fasta}"; then
-        _species="nasonia"
-        _lineage="$(readlink -f "data/busco/hymenoptera_odb9")"
-    elif grep -q "curculionidae" <<< "${_fasta}"; then
-        _species="tribolium2012"
-        _lineage="$(readlink -f "data/busco/endopterygota_odb9")"
-    fi
-
-    # run BUSCO
-    _cmd=( /usr/bin/python2 "${my_busco}"
-               --cpu 50
-               --mode genome
-               --in "${_fastapath}"
-               --out "${_filename}"
-               --lineage "${_lineage}"
-               --species "${_species}")
-    export _cmd
-    export _outpath
-
-    (
-        cd "${_outpath}" || exit 1
-        shopt -s extglob
-        printf "[ %s: Running BUSCO command ]\n" \
-            "$(date)"
-        printf "%s " "${_cmd[@]//+([[:blank:]])/ }"
-        printf "\n"
-        shopt -u extglob
-
-        "${_cmd[@]}" &> busco.log
-    )
 }
 export -f run_busco
 
