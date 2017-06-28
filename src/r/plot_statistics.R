@@ -19,8 +19,16 @@ raw_data[grep("asw-thruplex/output/soap_denovo2/decon/run_51mer", filepath),
          filename := "asw_thruplex_soap_51mer"]
 raw_data[grep("asw-nopcr/output/meraculous_diploid2/bbduk/run_51mer", filepath),
          filename := "asw_diploid2_51mer"]
-raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_51mer", filepath),
+raw_data[grep("asw-nopcr/output/meraculous_pe100_mp_only/bbduk/run_51mer", filepath),
          filename := "asw_diploid1_51mer"]
+
+raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_41mer", filepath),
+         filename := "asw_pe150_41mer"]
+raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_51mer", filepath),
+         filename := "asw_pe150_51mer"]
+raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_61mer", filepath),
+         filename := "asw_pe150_61mer"]
+
 
 # add species and family info to results
 assembly_stats_named <- merge(raw_data,
@@ -61,7 +69,10 @@ plot_data[is.na(category), category := "Comparison"]
 # make labels
 filename_order <- c("asw_thruplex_soap_51mer",
                     "asw_diploid2_51mer",
-                    "asw_diploid1_51mer", 
+                    "asw_diploid1_51mer",
+                    "asw_pe150_41mer",
+                    "asw_pe150_51mer",
+                    "asw_pe150_61mer",
                     "mh_diploid1_41mer",
                     "GCA_000956155.1_ASM95615v1_genomic",
                     "GCF_000355655.1_DendPond_male_1.0_genomic", 
@@ -85,4 +96,15 @@ plot_data[, filename := factor(filename, levels = filename_order)]
 saveRDS(plot_data, "output/plots/stats_pd.Rds")
 
 # vis
+pd <- plot_data[category == "Our data" &
+                    species_name == "Listronotus bonariensis"]
 
+ggplot(pd,
+       aes(x = filename, y = value)) +
+    theme(axis.text.x = element_text(angle = 30, hjust = 1)) +
+    xlab(NULL) + ylab(NULL) +
+    scale_fill_brewer(palette = "Set1", guide = FALSE) +
+    facet_wrap( ~ variable,
+                scales = "free_y",
+                nrow = 2) +
+    geom_col()
