@@ -28,6 +28,13 @@ raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_51mer", filepath),
          filename := "asw_pe150_51mer"]
 raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_61mer", filepath),
          filename := "asw_pe150_61mer"]
+raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_71mer", filepath),
+         filename := "asw_pe150_71mer"]
+raw_data[grep("asw-nopcr/output/meraculous/bbduk/run_81mer", filepath),
+         filename := "asw_pe150_81mer"]
+
+raw_data[grep("asw-nopcr/output/meraculous_diploid2/bbduk/run_71mer", filepath),
+         filename := "asw_pe150_dual_haplopath"]
 
 
 # add species and family info to results

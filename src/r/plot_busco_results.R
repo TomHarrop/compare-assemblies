@@ -54,7 +54,7 @@ plot_data[, category := factor(category,
 
 # order categories
 status_order <- c("Complete", "Duplicated", "Fragmented", "Missing")
-plot_data[, Status := factor(Status, levels = status_order)]
+plot_data[, Status := factor(Status, levels = rev(status_order))]
 
 # make labels
 filename_order <- c("asw_thruplex_soap_51mer",
@@ -84,15 +84,17 @@ saveRDS(plot_data, "output/plots/busco_pd.Rds")
 
 # visualise
 Set1 <- RColorBrewer::brewer.pal(9, "Set1")
-ggplot(plot_data[family == "Braconidae"],
+ggplot(plot_data[family == "Curculionidae"],
        aes(x = filename, y = status_percent, fill = Status)) +
     theme(strip.background = element_blank(),
-          strip.text = element_blank()) +
+          strip.text = element_blank(),
+          axis.text.x = element_text(angle = 90)) +
     facet_grid( ~ category, scales = "free_x", space = "free_x") +
     xlab(NULL) + ylab(NULL) +
-    scale_x_discrete(breaks = filename_order, labels = fn_lab) +
+    # scale_x_discrete(breaks = filename_order, labels = fn_lab) +
     scale_fill_manual(values = Set1,
                       guide = guide_legend(title = NULL)) +
-    geom_col(width = 0.75,
-             position = position_dodge(width = 0.75))
+    geom_col()
+    # geom_col(width = 0.75,
+    #          position = position_dodge(width = 0.75))
 
